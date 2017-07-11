@@ -4,7 +4,12 @@
 # Convert to byte array
 # Publish on the server in form of byte array
 
+# That code will be in c
 
+
+
+
+# Just an example of image sending in python
 import paho.mqtt.client as mqtt
 
 def on_publish(mosq, userdata, mid):
