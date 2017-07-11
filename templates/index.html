@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Capacloud</title>
+	<script hrerf="/static/jquery.min.js"></script>
+        <link href="/static/bootstrap.min.css" rel="stylesheet">
+        <link href="/static/font-awesome.min.css" rel="stylesheet">
+        <style type="text/css">
+
+    			body {
+    			/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#608f95+0,008588+9,0c2449+52,1a1e3b+100 */
+    			background: rgb(96,143,149); /* Old browsers */
+    			background: -moz-linear-gradient(-45deg, rgba(96,143,149,1) 0%, rgba(0,133,136,1) 9%, rgba(12,36,73,1) 52%, rgba(26,30,59,1) 100%); /* FF3.6-15 */
+    			background: -webkit-linear-gradient(-45deg, rgba(96,143,149,1) 0%,rgba(0,133,136,1) 9%,rgba(12,36,73,1) 52%,rgba(26,30,59,1) 100%); /* Chrome10-25,Safari5.1-6 */
+    			background: linear-gradient(135deg, rgba(96,143,149,1) 0%,rgba(0,133,136,1) 9%,rgba(12,36,73,1) 52%,rgba(26,30,59,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#608f95', endColorstr='#1a1e3b',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+    			}
+
+        </style>
+    </head>
+    <body>
+                  <div class="container background-color: rgb(255,0,255);">
+                        <br>
+                        <a href="/add"> <button type="button" class="btn btn-default"> Additional </button> </a>
+                        <br> <br>
+				<h4> Here is your Real Time Data </h4>			
+			<br>
+                        <div class="">
+                          <img src="/static/1.jpg" alt="No Image" height="300" width="400" id="img1">
+                          <img src="/static/2.jpg" alt="No Image" height="300" width="400" id="img2">
+                        </div>
+                        <br />
+                        <input type="text" name="leaf" value="Result will show here" disabled="" id="leaf" size="97">
+                  </div>
+                  <script src="/static/jquery-1.12.4.min.js"></script>
+                  <script src="/static/bootstrap.min.js"></script>
+                  <script src="static/mqttws31.js" ></script>
+
+                  <script>
+
+                  // for updating images using js
+
+                  var newImage = new Image();
+                  var newImage1 = new Image();
+                  newImage.src = "static/1.jpg";
+                  newImage1.src = "static/2.jpg";
+                  function updateImage()
+                      {
+                      if(newImage.complete) {
+                          document.getElementById("img1").src = newImage.src;
+                          document.getElementById("img2").src = newImage1.src;
+                          newImage = new Image();
+                          newImage1 = new Image();
+                          newImage.src = "static/1.jpg?val=" + Math.random().toString() ;
+                          newImage1.src = "static/2.jpg?val=" + Math.random().toString() ;
+                      }
+                      setTimeout(updateImage, 1000);
+                  }
+
+                  updateImage()
+
+                    // Testing for mqtt
+
+                    host = 'localhost';	// Put hostname or IP address of your server
+                    port = 1884;	// Put port on which you're running the broker in /etc/mosquitto/conf.d/*.conf  File
+                    topic = 'leaf';		// topic to subscribe to
+
+                    var mqtt;
+                    var reconnectTimeout = 5000;
+
+                    function MQTTconnect() {
+                  	      mqtt = new Paho.MQTT.Client(host, port, "12");
+                          mqtt.onConnectionLost = onConnectionLost;
+                          mqtt.onMessageArrived = onMessageArrived;
+                          console.log("Host="+ host + ", port=" + port );
+                          mqtt.connect( {onSuccess: onConnect });
+                      }
+
+                      function onConnect() {
+                          mqtt.subscribe(topic, {qos: 0});
+                      }
+
+                      function onConnectionLost(response) {
+                          setTimeout(MQTTconnect, reconnectTimeout);
+                      };
+
+                      function onMessageArrived(message) {
+                          var topic = message.destinationName;
+                          var payload = message.payloadString;
+                        	var table = document.getElementById("leaf");
+                        	table.value = payload;
+                      };
+
+                      MQTTconnect();
+
+                  </script>
+    </body>
+</html>
